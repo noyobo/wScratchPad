@@ -18,7 +18,7 @@ KISSY.add(function(S, Node, Base) {
 
         if (comConfig.srcNode == EMPTY) {
             alert('渲染节点不能为空');
-            return false;
+            return true;
         };
         //调用父类构造函数
         WScratchPad.superclass.constructor.call(self, comConfig);
