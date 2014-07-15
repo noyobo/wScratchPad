@@ -70,9 +70,7 @@ KISSY.add(function(S, Node, Base) {
             })
 
             self.on('afterBgChange', function(event) {
-                console.log(1)
                 self.options = self.getAttrVals();
-                console.log(self.options)
                 self.render();
             })
             self.on('afterFgChange', function(event) {
