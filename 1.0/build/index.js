@@ -47,12 +47,24 @@ KISSY.add('gallery/wScratchPad/1.0/index',function(S, Node, Base) {
             if (self.$el.css('position') === 'static') {
                 self.$el.css('position', 'relative');
             }
+            self.$img = $('<img src=""/>');
+            if (self.options.bgOrigin) {
+                self.$img.attr('crossOrigin', '*')
+            };
+            if (self.options.bgSize) {
+                self.$img.css({
+                    position: 'absolute',
+                    width: self.options.bgSize.width,
+                    height: self.options.bgSize.height
+                });
+            }else{
+                self.$img.css({
+                    position: 'absolute',
+                    width: '100%',
+                    height: '100%'
+                });
+            };
 
-            self.$img = $('<img src=""/>').attr('crossOrigin', EMPTY).css({
-                position: 'absolute',
-                width: '100%',
-                height: '100%'
-            });
 
             self.$scratchpad = $(self.canvas).css({
                 position: 'absolute',
@@ -136,11 +148,14 @@ KISSY.add('gallery/wScratchPad/1.0/index',function(S, Node, Base) {
                 } else {
                     // Have to load image before we can use it.
                     var canvasImage = new Image();
-                    canvasImage.src = self.options.fg;
                     canvasImage.onload = function() {
                         self.ctx.drawImage(this, 0, 0, width, height);
                         self.$img.show();
                     };
+                    if (self.options.fgOrigin) {
+                        canvasImage.crossOrigin = "*";
+                    };
+                    canvasImage.src = self.options.fg;
                 }
             }
 
@@ -288,8 +303,17 @@ KISSY.add('gallery/wScratchPad/1.0/index',function(S, Node, Base) {
             bg: {
                 value: '#cacaca'
             },
+            bgOrigin: {
+                value: false,
+            },
+            bgSize: {
+                value: null
+            },
             fg: {
                 value: '#6699ff'
+            },
+            fgOrigin: {
+                value: false
             },
             cursor: {
                 value: 'crosshair'
