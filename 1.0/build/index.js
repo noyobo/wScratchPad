@@ -83,25 +83,21 @@ KISSY.add('gallery/wScratchPad/1.0/index',function(S, Node, Base, Event) {
             self.on('destroy', function() {
                 self.$el.children().remove();
             })
-
-            self.on('afterBgChange', function(event) {
+            self._onSetBg = function() {
                 self.options = self.getAttrVals();
-                self.render();
-            })
-            self.on('afterFgChange', function(event) {
+            };
+            self._onSetFg  =function() {
                 self.options = self.getAttrVals();
-                self.render();
-            })
-            self.on('afterRealtimeChange', function(event) {
+            };
+            self._onSetRealtime = function() {
                 self.options = self.getAttrVals();
-            })
-            self.on('afterSizeChange', function(event) {
+            };
+            self._onSetSize = function() {
                 self.options = self.getAttrVals();
-            })
-            self.on('afterCursorChange', function(event) {
+            };
+            self._onSetCursor = function() {
                 self.options = self.getAttrVals();
-                self._setCursor();
-            })
+            };
         },
         render: function() {
             var self = this,
@@ -195,9 +191,8 @@ KISSY.add('gallery/wScratchPad/1.0/index',function(S, Node, Base, Event) {
         },
         _scratchFunc: function(event, type) {
             var self = this;
-            event.pageX = event.offsetX || Math.floor(event.pageX - self.canvasOffset.left);
-            event.pageY = event.offsetY || Math.floor(event.pageY - self.canvasOffset.top);
-
+            event.pageX = Math.floor(event.pageX - self.canvasOffset.left);
+            event.pageY = Math.floor(event.pageY - self.canvasOffset.top);
             self['_scratch' + type](event);
         },
         _scratchDown: function(e) {
@@ -213,11 +208,9 @@ KISSY.add('gallery/wScratchPad/1.0/index',function(S, Node, Base, Event) {
             self.ctx.arc(e.pageX, e.pageY, this.options.size / 2, 0, Math.PI * 2, true);
             self.ctx.closePath();
             self.ctx.fill();
-
             //start the path for a drag
             self.ctx.beginPath();
             self.ctx.moveTo(e.pageX, e.pageY);
-
             self.fire('down');
         },
         _scratchMove: function(e) {

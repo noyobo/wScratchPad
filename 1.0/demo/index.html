@@ -31,6 +31,9 @@
             -o-user-select: none;
             user-select: none;
         }
+        #log{
+            border:1px solid #ccc;
+        }
     </style>
 </head>
 <body>
@@ -41,6 +44,7 @@
 <input type="button" value="Clear" onclick="wScratchPad.clear()"/>
 <input type="button" value="Enable" onclick="wScratchPad.enable(true);"/>
 <input type="button" value="Disable" onclick="wScratchPad.enable(false);"/>
+<div id="log"></div>
 <script>
     var S = KISSY;
     S.Config.debug = ~location.href.indexOf('ks-debug');
@@ -61,6 +65,7 @@
     S.use('gallery/wScratchPad/1.0/index', function (S, WScratchPad) {
         var wScratchPad = window.wScratchPad = new WScratchPad({
             'srcNode' : '#demo1',
+            'size' : 20,
             'realtime' : true,
             'bg' : 'img/winner.png',
             'fg' : 'img/scratch-to-win.png',
@@ -82,8 +87,12 @@
         wScratchPad.on('afterEraserChange', function(event){
             S.Node.all('#demo1-percent').html( '已擦除:' +  parseFloat(event.newVal).toFixed(2) + '%')
         })
-
     })
+    var logdev = document.querySelector("#log");
+    window.log = function(){
+        var a = arguments;
+        logdev.innerHTML += Array.prototype.join.call(arguments, "===") + "<br/>";
+    }
 </script>
 </body>
 </html>
