@@ -9,10 +9,11 @@ gallery/wScratchPad/1.0/index
  * @author 宝码<nongyoubao@alibaba-inc.com>
  * @module wScratchPad
  **/
-KISSY.add('gallery/wScratchPad/1.0/index',function(S, Node, Base) {
+KISSY.add('gallery/wScratchPad/1.0/index',function(S, Node, Base, Event) {
     'use strict';
     var EMPTY = '';
     var $ = Node.all;
+    var Gesture = Event.Gesture;
     /**
      *
      * @class WScratchPad
@@ -57,7 +58,7 @@ KISSY.add('gallery/wScratchPad/1.0/index',function(S, Node, Base) {
                     width: self.options.bgSize.width,
                     height: self.options.bgSize.height
                 });
-            }else{
+            } else {
                 self.$img.css({
                     position: 'absolute',
                     width: '100%',
@@ -72,14 +73,10 @@ KISSY.add('gallery/wScratchPad/1.0/index',function(S, Node, Base) {
                 height: '100%'
             });
 
-            self.bindMobileEvents();
-
-            self.bindPcEvents();
-
             self.$el.append(self.$img).append(self.$scratchpad);
-
             self.render();
             self._addEvent();
+            self._bindEvents();
         },
         _addEvent: function() {
             var self = this;
@@ -121,8 +118,8 @@ KISSY.add('gallery/wScratchPad/1.0/index',function(S, Node, Base) {
 
             self.canvas.setAttribute('width', width * devicePixelRatio);
             self.canvas.setAttribute('height', height * devicePixelRatio);
-            self.ctx.scale(devicePixelRatio, devicePixelRatio);
 
+            self.ctx.scale(devicePixelRatio, devicePixelRatio);
             self.pixels = width * devicePixelRatio * height * devicePixelRatio;
 
             // Default to image hidden in case no bg or color is set.
@@ -170,52 +167,22 @@ KISSY.add('gallery/wScratchPad/1.0/index',function(S, Node, Base) {
         enable: function(enabled) {
             this.enabled = enabled === true ? true : false;
         },
-        bindMobileEvents: function() {
+        _bindEvents: function() {
             var self = this;
-            self.$scratchpad.on('touchstart touchmove touchend touchcancel', function(event) {
-                var touches = (event.changedTouches || event.originalEvent.targetTouches),
-                    first = touches[0],
-                    type = EMPTY;
-                switch (event.type) {
-                    case 'touchstart':
-                        type = 'mousedown';
-                        break;
-                    case 'touchmove':
-                        type = 'mousemove';
-                        event.preventDefault();
-                        break;
-                    case 'touchend':
-                        type = 'mouseup';
-                        break;
-                    default:
-                        return;
-                }
-
-                var simulatedEvent = document.createEvent('MouseEvent');
-
-                simulatedEvent.initMouseEvent(
-                    type, true, true, window, 1,
-                    first.screenX, first.screenY, first.clientX, first.clientY,
-                    false, false, false, false, 0 /*left*/ , null
-                );
-
-                first.target.dispatchEvent(simulatedEvent);
-            })
-        },
-        bindPcEvents: function() {
-            var self = this;
-            self.$scratchpad.on('mousedown', function(event) {
+            self.$scratchpad.on(Gesture.start, function(event) {
                 if (!self.enabled) {
                     return true;
                 };
                 self.canvasOffset = self.$scratchpad.offset();
                 self.scratch = true;
                 self._scratchFunc(event, 'Down');
-            }).on('mousemove', function(event) {
+            }).on(Gesture.move, function(event) {
+                event.preventDefault();
                 if (self.scratch) {
                     self._scratchFunc(event, 'Move');
                 };
-            }).on('mouseup', function(event) {
+            }).on(Gesture.end, function(event) {
+                event.preventDefault();
                 if (self.scratch) {
                     self.scratch = false;
                     self._scratchFunc(event, 'Up');
@@ -317,6 +284,9 @@ KISSY.add('gallery/wScratchPad/1.0/index',function(S, Node, Base) {
             },
             cursor: {
                 value: 'crosshair'
+            },
+            color: {
+                value: '#cccccc'
             }
         }
     });
